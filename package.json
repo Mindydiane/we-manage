@@ -2,7 +2,7 @@
   "name": "we-manage",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
     "test": "jest",
     "start": "node server.js"
@@ -11,10 +11,18 @@
     "type": "git",
     "url": "git+https://github.com/Mindydiane/we-manage.git"
   },
+  "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Mindydiane/we-manage/issues"
   },
-  "homepage": "https://github.com/Mindydiane/we-manage#readme"
+  "homepage": "https://github.com/Mindydiane/we-manage#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mysql2": "^2.2.5"
+  },
+  "devDependencies": {
+    "jest": "^27.0.6"
+  }
 }
