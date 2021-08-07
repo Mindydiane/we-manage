@@ -4,7 +4,7 @@ USE emp_role;
 
 CREATE TABLE department (
     id INT NOT NULL AUTO_INCREMENT,
-    depName VARCHAR(30) NOT NULL,
+    name VARCHAR(30) NOT NULL,
     PRIMARY KEY (id)
 );
 
