@@ -1,3 +1,4 @@
+// Import inquirer and connection
 const inquirer = require("inquirer");
 const db = require("./config/connection");
 
@@ -5,7 +6,7 @@ db.connect((err) => {
   if (err) throw err;
   console.log("Connected to database");
 });
-
+//function to show questions
 function questions() {
   inquirer
     .prompt({
@@ -37,14 +38,14 @@ function questions() {
       } else if (answers.questions === "Update Employee Role") {
         // call update employee role
       } else if (answers.questions === "Add Role") {
-        // call Update Employee Manager
-        //   } else if (answers.questions === "") {
+        addRole()
       } else if (answers.questions === "Exit Here") {
         // exit
       }
     });
 }
 
+//shows roles
 function getRoles() {
   const sql = `SELECT * FROM roles;`;
   db.query(sql, function (err, res) {
@@ -54,6 +55,7 @@ function getRoles() {
   });
 }
 
+//shows employees
 function getEmps() {
   const sql = ` SELECT employee.first_name, employee.last_name,  roles.title,
     roles.salary, department.name, CONCAT(manager.first_name, " ", manager.last_name) AS manager
@@ -67,6 +69,7 @@ function getEmps() {
   });
 }
 
+//shows department
 function getDept() {
   const sql = `SELECT * FROM department;`;
   db.query(sql, function (err, res) {
@@ -75,6 +78,7 @@ function getDept() {
     questions();
   });
 }
+
 
 //add department
 function addDept() {
@@ -99,6 +103,42 @@ function addDept() {
       })
     });
 };
+
+//add a role
+function addRole() {
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          name: "titleInfo",
+          message: "What title does the role have?",
+        },
+        {
+          type: "input",
+          name: "income",
+          message: "How much is the salary?",
+        },
+        {
+          type: "input",
+          name: "dpt",
+          message: "What is the departments id?",
+        }
+      ])
+      .then(function (info) {
+        const roleTi = info.titleInfo;
+        const roleIn = info.income;
+        const roleDt = info.dpt;
+        
+        
+        const sql = `INSERT INTO roles (title, salary, department_id)
+          VALUES ('${roleTi}', '${roleIn}', '${roleDt}')`;
+        db.query(sql, function (err, res) {
+          if (err) throw err;
+          console.table(res);
+          questions();
+        })
+      });
+  };
 
 //add employee
 function addEmp() {
@@ -140,6 +180,8 @@ function addEmp() {
       })
     });
 };
+
+//update an employee role
 
 questions();
 
