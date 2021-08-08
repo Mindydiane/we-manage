@@ -17,10 +17,11 @@ function questions() {
         "View All Departments",
         "View All Employees",
         "View All Roles",
-        "Add Role",
         "Add Department",
+        "Add Role",
         "Add Employee",
-        "Update Employee Role",
+        "View Employee By Department",
+        // "Update Employee Role",
         "Exit Here",
       ],
     })
@@ -31,16 +32,19 @@ function questions() {
         getDept();
       } else if (answers.questions === "View All Roles") {
         getRoles();
-      } else if (answers.questions === "Add Employee") {
+      } else if (answers.questions === "View Employee By Department") {
+        empByDept()
+      }else if (answers.questions === "Add Employee") {
         addEmp();
       } else if (answers.questions === "Add Department") {
         addDept();
-      } else if (answers.questions === "Update Employee Role") {
-        // call update employee role
+    //   } else if (answers.questions === "Update Employee Role") {
+    //     empRole();
       } else if (answers.questions === "Add Role") {
-        addRole()
+        addRole();
       } else if (answers.questions === "Exit Here") {
         // exit
+        return;
       }
     });
 }
@@ -58,7 +62,7 @@ function getRoles() {
 //shows employees
 function getEmps() {
   const sql = ` SELECT employee.first_name, employee.last_name,  roles.title,
-    roles.salary, department.name, CONCAT(manager.first_name, " ", manager.last_name) AS manager
+    roles.salary, department.dept_name, CONCAT(manager.first_name, " ", manager.last_name) AS manager
     FROM employee LEFT JOIN roles on employee.role_id = roles.id
     LEFT JOIN department ON roles.department_id = department.id
     LEFT JOIN employee manager ON manager.id = employee.manager_id;`;
@@ -79,66 +83,75 @@ function getDept() {
   });
 }
 
+//View employees by department bonus
+function empByDept() {
+  const sql = `SELECT department.dept_name, employee.first_name, employee.last_name
+  FROM employee LEFT JOIN roles on employee.role_id = roles.id
+  LEFT JOIN department ON roles.department_id = department.id;`;
+  db.query(sql, function (err, res) {
+    if (err) throw err;
+    console.table(res);
+    questions();
+  }); 
+}
 
 //add department
 function addDept() {
-    inquirer
+  inquirer
     .prompt([
       {
         type: "input",
         name: "deptName",
         message: "What is the name of the department?",
-      }
+      },
     ])
     .then(function (inform) {
       const depart = inform.deptName;
-      
-      
-      const sql = `INSERT INTO department (name)
+
+      const sql = `INSERT INTO department (dept_name)
         VALUES ('${depart}')`;
       db.query(sql, function (err, res) {
         if (err) throw err;
         console.table(res);
         questions();
-      })
+      });
     });
-};
+}
 
 //add a role
 function addRole() {
-    inquirer
-      .prompt([
-        {
-          type: "input",
-          name: "titleInfo",
-          message: "What title does the role have?",
-        },
-        {
-          type: "input",
-          name: "income",
-          message: "How much is the salary?",
-        },
-        {
-          type: "input",
-          name: "dpt",
-          message: "What is the departments id?",
-        }
-      ])
-      .then(function (info) {
-        const roleTi = info.titleInfo;
-        const roleIn = info.income;
-        const roleDt = info.dpt;
-        
-        
-        const sql = `INSERT INTO roles (title, salary, department_id)
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "titleInfo",
+        message: "What title does the role have?",
+      },
+      {
+        type: "input",
+        name: "income",
+        message: "How much is the salary?",
+      },
+      {
+        type: "input",
+        name: "dpt",
+        message: "What is the departments id?",
+      },
+    ])
+    .then(function (info) {
+      const roleTi = info.titleInfo;
+      const roleIn = info.income;
+      const roleDt = info.dpt;
+
+      const sql = `INSERT INTO roles (title, salary, department_id)
           VALUES ('${roleTi}', '${roleIn}', '${roleDt}')`;
-        db.query(sql, function (err, res) {
-          if (err) throw err;
-          console.table(res);
-          questions();
-        })
+      db.query(sql, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        questions();
       });
-  };
+    });
+}
 
 //add employee
 function addEmp() {
@@ -170,19 +183,50 @@ function addEmp() {
       const infoLast = info.lastName;
       const infoRole = info.empRole;
       const infoMgr = info.mgr;
-      
+
       const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
         VALUES ('${infoFirst}', '${infoLast}', '${infoRole}', '${infoMgr}')`;
       db.query(sql, function (err, res) {
         if (err) throw err;
         console.table(res);
         questions();
-      })
+      });
     });
-};
+}
 
-//update an employee role
+
+
+// //update an employee role
+// function empRole() {
+
+//   inquirer
+//     .prompt([
+//       {
+//         type: "list",
+//         name: "empl",
+//         message: " Select an employee to update.",
+//         choices: `SELECT * FROM employee`
+//       },
+//       {
+//         type: "input",
+//         name: "newRole",
+//         message: "What is the name of the department?",
+//       },
+//     ])
+//     .then(function (newInfo) {
+//       const promo = newInfo.newRole;
+
+//       const sql = `UPDATE employee
+//        SET
+//        role_id = ?
+//        WHERE id = ?
+//        VALUE ('${promo}')`;
+//       db.query(sql, function (err, res) {
+//         if (err) throw err;
+//         console.table(res);
+//         questions();
+//       });
+//     });
+// }
 
 questions();
-
-
