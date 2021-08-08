@@ -15,8 +15,8 @@ function questions() {
       message: "What would like to do?",
       choices: [
         "View All Departments",
-        "View All Employees",
         "View All Roles",
+        "View All Employees",
         "Add Department",
         "Add Role",
         "Add Employee",
