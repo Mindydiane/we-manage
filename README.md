@@ -21,10 +21,7 @@ We Manage so you don't have to!
 
 ## Demo
 
-![demo](./assets/EMP Tracker.gif)
-
-
-
+![EMPTracker (1)](https://user-images.githubusercontent.com/80286982/128624513-6cc575a6-ab22-4429-bd9b-4ef9acf173d0.gif)
 
 
 
