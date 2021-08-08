@@ -15,36 +15,30 @@ function questions() {
       choices: [
         "View All Departments",
         "View All Employees",
-        "View All Employees By Department",
-        "View All Employees By Manager",
+        "View All Roles",
+        "Add Role",
         "Add Department",
         "Add Employee",
-        "Remove Employee",
         "Update Employee Role",
-        "Update Employee Manager",
-        "View All Roles",
         "Exit Here",
       ],
     })
     .then(function (answers) {
       if (answers.questions === "View All Employees") {
         getEmps();
-      } else if (answers.questions === "View All Employees By Department") {
-        //call employee by department
       } else if (answers.questions === "View All Departments") {
         getDept();
-      } else if (answers.questions === "Add Department") {
-        addDept();
-      } else if (answers.questions === "Add Employee") {
-        // post/call add employee
-      } else if (answers.questions === "Remove Employee") {
-        // call remove employee
-      } else if (answers.questions === "Update Employee Role") {
-        // call update employee role
-      } else if (answers.questions === "") {
-        // call Update Employee Manager
       } else if (answers.questions === "View All Roles") {
         getRoles();
+      } else if (answers.questions === "Add Employee") {
+        addEmp();
+      } else if (answers.questions === "Add Department") {
+        addDept();
+      } else if (answers.questions === "Update Employee Role") {
+        // call update employee role
+      } else if (answers.questions === "Add Role") {
+        // call Update Employee Manager
+        //   } else if (answers.questions === "") {
       } else if (answers.questions === "Exit Here") {
         // exit
       }
@@ -56,6 +50,7 @@ function getRoles() {
   db.query(sql, function (err, res) {
     if (err) throw err;
     console.table(res);
+    questions();
   });
 }
 
@@ -68,6 +63,7 @@ function getEmps() {
   db.query(sql, function (err, res) {
     if (err) throw err;
     console.table(res);
+    questions();
   });
 }
 
@@ -76,64 +72,75 @@ function getDept() {
   db.query(sql, function (err, res) {
     if (err) throw err;
     console.table(res);
-  }).then(() => questions());
-}
-
-function addDept() {
-  const sql = `INSERT INTO department (name) 
-  VALUES (?)`;
-  const params = [body.name];
-  db.query(sql, function (err, res) {
-    if (errors) {
-      res.status(400).json({ error: errors });
-      return;
-    }
+    questions();
   });
 }
-// function fltbymgr() {
-//   const mgrArr = [];
-//   db.query(`SELECT * FROM managers;`, (err, res) => {
-//     if (err) throw err;
-//     res.forEach((manager) =>
-//       mgrArr.push(`${manager.first_name} ${manager.last_name}`)
-//     );
-//     inquirer
-//       .prompt([
-//         {
-//           name: "action",
-//           type: "list",
-//           message: "Select a Manager?",
-//           choices: mgrArr,
-//         },
-//       ])
-//       .then((answer) => {
-//         const sql = `SELECT
-//                 employee.id,
-//                 employee.first_name,
-//                 employee.last_name,
-//                 roles.title AS title,
-//                 departments.title AS department,
-//                 roles.salary
-//             FROM
-//                 employee
-//             LEFT JOIN
-//                 roles ON employee.role_id = roles.id
-//             LEFT JOIN
-//                 department ON department.id = roles.department_id
-//             LEFT JOIN
-//                 managers ON employee.manager_id = managers.id
-//             WHERE CONCAT(managers.first_name, ' ',managers.last_name) = ?;`;
-//         const manager = answer.action;
-//         db.query(sql, manager, (err, res) => {
-//           if (err) throw err;
-//           console.log(`
-//                     Here are the employees managed by ${manager}
-//                     `);
-//           console.table(res);
-//           employeeFilter();
-//         });
-//       });
-//   });
-// }
+
+//add department
+function addDept() {
+    inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "deptName",
+        message: "What is the name of the department?",
+      }
+    ])
+    .then(function (inform) {
+      const depart = inform.deptName;
+      
+      
+      const sql = `INSERT INTO department (name)
+        VALUES ('${depart}')`;
+      db.query(sql, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        questions();
+      })
+    });
+};
+
+//add employee
+function addEmp() {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "firstName",
+        message: "What is the employee's first name?",
+      },
+      {
+        type: "input",
+        name: "lastName",
+        message: "What is the employee's last name?",
+      },
+      {
+        type: "input",
+        name: "empRole",
+        message: "What is the employee's role?",
+      },
+      {
+        type: "input",
+        name: "mgr",
+        message: "Enter the managers id? ",
+      },
+    ])
+    .then(function (info) {
+      const infoFirst = info.firstName;
+      const infoLast = info.lastName;
+      const infoRole = info.empRole;
+      const infoMgr = info.mgr;
+      
+      const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
+        VALUES ('${infoFirst}', '${infoLast}', '${infoRole}', '${infoMgr}')`;
+      db.query(sql, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        questions();
+      })
+    });
+};
 
 questions();
+
+
