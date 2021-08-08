@@ -19,6 +19,12 @@ We Manage so you don't have to!
 ### Easy input to add new information
 **As shown on video below**
 
+## Demo
+
+![demo](./assets/EMP Tracker.gif)
+
+
+
 
 
 
